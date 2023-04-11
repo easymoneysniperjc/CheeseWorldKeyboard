@@ -20,6 +20,8 @@ public class FRANKTHETANK {
     public boolean down;
     public boolean up;
 
+    public int score;
+
 
     public FRANKTHETANK(int pXpos, int pYpos, int dxParameter, int dyParameter, Image picParameter) {
 

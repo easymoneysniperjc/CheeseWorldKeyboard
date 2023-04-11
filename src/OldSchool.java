@@ -9,6 +9,7 @@
 
 import javafx.scene.layout.Background;
 import sun.awt.image.ToolkitImage;
+import sun.plugin2.message.GetAppletMessage;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
@@ -49,6 +50,13 @@ public class OldSchool implements Runnable, KeyListener {
     public TapeRecorder theTapeRecorder;
     public TapeRecorder[] tarray;
     public FRANKTHETANK user;
+
+    public boolean start;
+
+    public boolean GameOver;
+
+    public boolean Win;
+
 
     // Main method definition
     // This is the code that runs first and automatically
@@ -128,15 +136,21 @@ public class OldSchool implements Runnable, KeyListener {
     public void checkIntersections() {
         for (int i=0; i< tarray.length; i++){
             if(tarray[i]!= null){
-                if(user.rec.intersects(tarray[i].rec)){
+                if(user.rec.intersects(tarray[i].rec) && tarray[i].isAlive == true){
                     tarray[i].isAlive = false;
+                    user.score= user.score+1;
                 }
             }
+        }
+        if(user.score==3){
+            GameOver=true;
+            Win=true;
         }
         if(user.rec.intersects(RodneysKidBrotherCheeeese1.rec)){
             user.isAlive = false;
             user.xpos = -1000;
             user.ypos = -1000;
+            GameOver=true;
         }
     }
 
@@ -154,23 +168,36 @@ public class OldSchool implements Runnable, KeyListener {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
-        //draw characters to the screen
-        g.drawImage(BackgroundPic ,0, 0, WIDTH, HEIGHT, null);
+        if(start==false){
+            //draw start screen
+            g.drawString("Start", 500,350);
+        } else if (GameOver==false) {
 
-        for(int x=0; x< tarray.length; x++){
-            if(tarray[x].isAlive){
-                g.drawImage(tarray[x].pic, tarray[x].xpos, tarray[x].ypos, tarray[x].width, tarray[x].height, null);
+            //draw characters to the screen
+            g.drawImage(BackgroundPic, 0, 0, WIDTH, HEIGHT, null);
+
+            for (int x = 0; x < tarray.length; x++) {
+                if (tarray[x].isAlive) {
+                    g.drawImage(tarray[x].pic, tarray[x].xpos, tarray[x].ypos, tarray[x].width, tarray[x].height, null);
+                }
+
+
             }
 
+            g.drawImage(RodneysKidBrotherCheeeese1.pic, RodneysKidBrotherCheeeese1.xpos, RodneysKidBrotherCheeeese1.ypos, RodneysKidBrotherCheeeese1.width, RodneysKidBrotherCheeeese1.height, null);
+            //  g.drawImage(theTapeRecorder.pic, theTapeRecorder.xpos, theTapeRecorder.ypos, theTapeRecorder.width, theTapeRecorder.height, null);
+            if (user.isAlive) {
+                g.drawImage(user.pic, user.xpos, user.ypos, user.width, user.height, null);
+            }
 
+            g.drawString("score: " + user.score, 200, 100);
+
+        } else if(Win==true) {//GameOver
+            //GameOver You Win screen
+            g.drawString("You Won!", 500, 350);
+        } else {
+            g.drawString("You Lost", 500, 350);
         }
-
-        g.drawImage(RodneysKidBrotherCheeeese1.pic, RodneysKidBrotherCheeeese1.xpos, RodneysKidBrotherCheeeese1.ypos, RodneysKidBrotherCheeeese1.width, RodneysKidBrotherCheeeese1.height, null);
-      //  g.drawImage(theTapeRecorder.pic, theTapeRecorder.xpos, theTapeRecorder.ypos, theTapeRecorder.width, theTapeRecorder.height, null);
-        if(user.isAlive){
-            g.drawImage(user.pic, user.xpos, user.ypos, user.width, user.height, null);
-        }
-
         g.dispose();
         bufferStrategy.show();
     }
@@ -198,6 +225,10 @@ public class OldSchool implements Runnable, KeyListener {
         }
         if (keyCode == 87) { // w
             user.up = true;
+        }
+
+        if (keyCode == 10){
+            start=true;
         }
     }//keyPressed()
 
